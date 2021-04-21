@@ -14,3 +14,5 @@ wxWidgets Cross-Platform C++ GUI <br />
 ## To-Do
 Optimize data types <br />
 Optimize 7-hand evaluator algorithm
+
+![Console Title](readme/console_showcase.png)
