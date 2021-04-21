@@ -1,6 +1,8 @@
 # holdem
 Pure C texas hold 'em library. C++ GUI.
 
+![GUI](readme/gui_showcase.png)
+
 ## Size
 The goal for this is to optimize memory, currently the .so is 75Kb.
 ## Features
