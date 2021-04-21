@@ -13,8 +13,8 @@ wxWidgets Cross-Platform C++ GUI <br />
 
 ## Installation
 1. Clone repository
-2. cd into ```gui/src/```
-3. run ```bash completemake.sh```
+2. cd into ```gui/src/``` for GUI or ```/src/``` for Console/Library
+3. run ```make``` and ```make clean```
 ## To-Do
 Optimize data types <br />
 Optimize 7-hand evaluator algorithm
