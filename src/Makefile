@@ -19,7 +19,7 @@ $(SRCS:.c=.d):%.d:%.c
 	$(CC) $(CFLAGS) -MM $< >$@
 
 $(TARGET_EXE): $(OBJS)
-	$(CC) -o texasholdem texasholdem.c $(SRCS)
+	$(CC) -o holdem texasholdem.c $(SRCS)
 
 include $(SRCS:.c=.d)
 
