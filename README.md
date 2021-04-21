@@ -11,7 +11,7 @@ Cactus Kev's Hand Evaulation <br />
 Mersenne Twister RNG <br />
 wxWidgets Cross-Platform C++ GUI <br />
 
-## Installation (Library)
+## Installation
 1. Clone repository
 2. cd into ```gui/src/```
 3. run ```bash completemake.sh```
