@@ -1,5 +1,5 @@
 # holdem
-A lightweight pure C texas hold 'em library. C++ GUI.
+A lightweight pure C texas hold 'em library. Cross-platform C++ GUI.
 
 ![GUI](readme/gui_showcase.png)
 
