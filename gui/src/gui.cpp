@@ -45,7 +45,6 @@ Frame::Frame( Game* game) : wxFrame( NULL, wxID_ANY, wxT("NL Texas Hold 'Em"), w
 	InitCards();
 	
 	InitOptions();
-	g->table[0].stack = 100;
 	RoundHandler();
 	Update();
 	SetSizer( frameContainer );
