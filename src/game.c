@@ -375,7 +375,7 @@ void deal_community_cards( Game* g, int round)
 void winnings_distribute( Game* g )
 {
 	pot_list_sort( g->pot_list, g->gd.num_players );
-	unsigned short* winner;
+	unsigned short* winner = malloc(sizeof(*winner) * 2);
 	if(g->pot_list->size == 1){
 		winner = pot_winner( g, g->pot_list->list[0] );
 		printf("typ1:WINNER OF %d-POT: PLAYER %d WINS %d chips.\n", g->pot_list->list[0].max, winner[0], g->gd.total_pot);
