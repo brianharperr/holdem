@@ -21,4 +21,5 @@ Optimize 7-hand evaluator algorithm
 
 ## License
 GNU GPL v2.0
+## 
 ![Console Title](readme/console_showcase.png)
