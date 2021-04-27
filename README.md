@@ -19,4 +19,6 @@ wxWidgets Cross-Platform C++ GUI <br />
 Optimize data types <br />
 Optimize 7-hand evaluator algorithm
 
+## License
+GNU GPL v2.0
 ![Console Title](readme/console_showcase.png)
