@@ -11,28 +11,38 @@ void TexasHoldEm()
 		if(g->gd.round == PREFLOP){
 			round_handler( g );
 		}
-		printf("Player %d: %d : ", g->gi.turn_idx, g->table[g->gi.turn_idx].stack);
-		scanf(" %d", &options);
-		if( options > 0 )
+
+		if(g->gi.turn_idx == 0)
 		{
-			raise_bet( g, options);
-		}
-		else if(options == 0){
-			if(g->gi.turn_idx == g->gi.end_player_idx){
-				call( g );
-				round_handler( g );
-			}else{
-				call( g );
+			printf("Player %d: %d : ", g->gi.turn_idx, g->table[g->gi.turn_idx].stack);
+			scanf(" %d", &options);
+			if( options > 0 )
+			{
+				raise_bet( g, options);
 			}
-		}
-		else{
-			if(g->gi.turn_idx == g->gi.end_player_idx){
-				fold( g );
-				round_handler( g );
-			}else{
-				fold( g );
+			else if(options == 0){
+				if(g->gi.turn_idx == g->gi.end_player_idx){
+					call( g );
+					round_handler( g );
+				}else{
+					call( g );
+				}
 			}
+			else{
+				if(g->gi.turn_idx == g->gi.end_player_idx){
+					fold( g );
+					round_handler( g );
+				}else{
+					fold( g );
+				}
+			}
+		}else{
+			ai_decision( g );
 		}
+
+		// printf("Player %d: %d : ", g->gi.turn_idx, g->table[g->gi.turn_idx].stack);
+		// scanf(" %d", &options);
+		
 	}
 	game_free( g );
 }
@@ -178,7 +188,7 @@ void round_handler( Game* g )
 		contributions_clear( g );
 
 	    deal_community_cards( g, FLOP );
-
+	    printf("FLOP: ");
 	    print_hand( g->gd.community, 3);
 
 	    break;
@@ -188,7 +198,7 @@ void round_handler( Game* g )
 		contributions_clear( g );
 
 	    deal_community_cards( g, TURN );
-
+	    printf("TURN: ");
 	    print_hand( g->gd.community, 4);
 
 	    break;
@@ -198,7 +208,7 @@ void round_handler( Game* g )
 		contributions_clear( g );
 
 	    deal_community_cards( g, RIVER );
-
+	    printf("RIVER: ");
 	    print_hand( g->gd.community, 5);
 
 	    break;
@@ -246,7 +256,6 @@ void call( Game* g )
 	{
 		if(need_new_pot( g, g->table[g->gi.turn_idx].stack + g->table[g->gi.turn_idx].contributed ))
 		{
-			printf("Call Pot added.\n");
 			pot_list_add( g->pot_list, g->gd.num_players, g->table[g->gi.turn_idx].stack + g->table[g->gi.turn_idx].contributed, g->gi.turn_idx );
 		}
 		g->table[g->gi.turn_idx].all_in = 1;
@@ -291,7 +300,6 @@ void raise_bet( Game* g, int amount )
 		{
 			if(need_new_pot( g, g->table[g->gi.turn_idx].stack + g->table[g->gi.turn_idx].contributed))
 			{
-				printf("Raise Pot added.\n");
 				pot_list_add( g->pot_list, g->gd.num_players, g->table[g->gi.turn_idx].stack, g->gi.turn_idx );
 			}
    			g->table[g->gi.turn_idx].all_in = 1;
@@ -315,7 +323,6 @@ void raise_bet( Game* g, int amount )
 void fold( Game* g )
 {
 	g->table[g->gi.turn_idx].out = 1;
-	printf("Playing: %d\n", playing_count( g ));
     if(playing_count( g ) == 0)
     {
     	force_end(g);
@@ -378,7 +385,7 @@ void winnings_distribute( Game* g )
 	unsigned short* winner = malloc(sizeof(*winner) * 2);
 	if(g->pot_list->size == 1){
 		winner = pot_winner( g, g->pot_list->list[0] );
-		printf("typ1:WINNER OF %d-POT: PLAYER %d WINS %d chips.\n", g->pot_list->list[0].max, winner[0], g->gd.total_pot);
+		printf("WINNER OF %d-POT: PLAYER %d WINS %d chips.\n", g->pot_list->list[0].max, winner[0], g->gd.total_pot);
 		g->table[winner[0]].stack += g->gd.total_pot;
 		g->gd.total_pot = 0;
 	}else{
@@ -387,7 +394,7 @@ void winnings_distribute( Game* g )
 			winner = pot_winner( g, g->pot_list->list[i] );
 			if(g->pot_list->list[i].max == 0)
 			{
-				printf("typ2:WINNER OF %d-POT: PLAYER %d WINS %d chips.\n", g->pot_list->list[i].max, winner[0], g->gd.total_pot);
+				printf("WINNER OF %d-POT: PLAYER %d WINS %d chips.\n", g->pot_list->list[i].max, winner[0], g->gd.total_pot);
 				g->table[winner[0]].stack += g->gd.total_pot;
 				g->gd.total_pot = 0;
 
@@ -400,7 +407,7 @@ void winnings_distribute( Game* g )
 					g->table[winner[0]].stack += g->pot_list->list[i].max * g->gd.num_players;
 					g->gd.total_pot -= g->pot_list->list[i].max * g->gd.num_players;
 				}
-				printf("typ3:WINNER OF %d-POT: PLAYER %d WINS %d chips.\n", g->pot_list->list[i].max, winner[0], g->table[winner[0]].stack - tmp);
+				printf("WINNER OF %d-POT: PLAYER %d WINS %d chips.\n", g->pot_list->list[i].max, winner[0], g->table[winner[0]].stack - tmp);
 			}
 		}
 	}
@@ -517,6 +524,36 @@ void contributions_clear( Game* g )
 	for( int i = 0; i < g->gd.num_players; ++i)
 	{
 		g->table[i].contributed = 0;
+	}
+}
+
+// Extremely basic RNG-based AI.
+void ai_decision( Game* g )
+{
+	time_t t;
+	int move, raise;
+    MTRand rng = seedRand( (unsigned)time( &t ) );
+    move = ( int )( genRand( &rng ) * 100 );
+    if(move < 80){
+    	printf("Player %d called %d chips.\n", g->gi.turn_idx, g->gd.curr_min_bet);
+    	if(g->gi.turn_idx == g->gi.end_player_idx){
+			call( g );
+			round_handler( g );
+		}else{
+			call( g );
+		}
+	}else if(move >= 80 && move < 90){
+		raise = ( int )( genRand( &rng ) * (g->table[g->gi.turn_idx].stack - g->gd.curr_min_bet) ) + g->gd.curr_min_bet;
+		printf("Player %d raised %d chips.\n", g->gi.turn_idx, raise);
+		raise_bet( g, raise );
+	}else{
+		printf("Player %d folded.\n", g->gi.turn_idx);
+		if(g->gi.turn_idx == g->gi.end_player_idx){
+			fold( g );
+			round_handler( g );
+		}else{
+			fold( g );
+		}
 	}
 }
 
