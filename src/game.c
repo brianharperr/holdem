@@ -37,7 +37,7 @@ void TexasHoldEm()
 				}
 			}
 		}else{
-			ai_decision( g );
+			console_ai( g );
 		}
 
 		// printf("Player %d: %d : ", g->gi.turn_idx, g->table[g->gi.turn_idx].stack);
@@ -528,32 +528,51 @@ void contributions_clear( Game* g )
 }
 
 // Extremely basic RNG-based AI.
-void ai_decision( Game* g )
+void console_ai( Game* g )
 {
 	time_t t;
-	int move, raise;
+	int raise;
+	MTRand rng = seedRand( (unsigned)time( &t ) );
+	switch(ai_move_decision( g ))
+	{
+		case CALL:
+			printf("Player %d called %d chips.\n", g->gi.turn_idx, g->gd.curr_min_bet);
+	    	if(g->gi.turn_idx == g->gi.end_player_idx){
+				call( g );
+				round_handler( g );
+			}else{
+				call( g );
+			}
+			break;
+		case RAISE:
+			raise = ( int )( genRand( &rng ) * (g->table[g->gi.turn_idx].stack - g->gd.curr_min_bet) ) + g->gd.curr_min_bet;
+			printf("Player %d raised %d chips.\n", g->gi.turn_idx, raise);
+			raise_bet( g, raise );
+			break;
+		case FOLD:
+			printf("Player %d folded.\n", g->gi.turn_idx);
+			if(g->gi.turn_idx == g->gi.end_player_idx){
+				fold( g );
+				round_handler( g );
+			}else{
+				fold( g );
+			}
+			break;
+	}
+}
+
+int ai_move_decision( Game* g )
+{
+	time_t t;
+	int move;
     MTRand rng = seedRand( (unsigned)time( &t ) );
     move = ( int )( genRand( &rng ) * 100 );
     if(move < 80){
-    	printf("Player %d called %d chips.\n", g->gi.turn_idx, g->gd.curr_min_bet);
-    	if(g->gi.turn_idx == g->gi.end_player_idx){
-			call( g );
-			round_handler( g );
-		}else{
-			call( g );
-		}
+    	return CALL;
 	}else if(move >= 80 && move < 90){
-		raise = ( int )( genRand( &rng ) * (g->table[g->gi.turn_idx].stack - g->gd.curr_min_bet) ) + g->gd.curr_min_bet;
-		printf("Player %d raised %d chips.\n", g->gi.turn_idx, raise);
-		raise_bet( g, raise );
+		return FOLD;
 	}else{
-		printf("Player %d folded.\n", g->gi.turn_idx);
-		if(g->gi.turn_idx == g->gi.end_player_idx){
-			fold( g );
-			round_handler( g );
-		}else{
-			fold( g );
-		}
+		return RAISE;
 	}
 }
 

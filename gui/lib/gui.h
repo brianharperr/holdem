@@ -18,13 +18,6 @@ typedef struct gui_data{
 	Game *game_buff;
 } gui_data;
 
-//App
-class GUI : public wxApp
-{
-    public:
-	virtual bool OnInit();
-};
-
 //Raise Menu
 class RaiseMenu : public wxDialog
 {
@@ -51,11 +44,13 @@ class Frame : public wxFrame
 		Game *g;
 		gui_data *gui_gd;
 		int curr_round;
-
+		int client_player_idx;
+		bool isAtEnd;
+		
 		void RoundHandler();
 		void Update();
+		bool IsLastMove();
 	private:
-		int client_player_idx;
 
 		Deck *deck;
 
@@ -89,7 +84,6 @@ class Frame : public wxFrame
 		void InitCards();
 		void InitOptions();
 		void UpdateText();
-		bool IsLastMove();
 		std::string GetCardFilepath(Card c);
 
 		void OnFold(wxCommandEvent& event);
@@ -128,4 +122,20 @@ class Menu : public wxMenuBar
 		void OnSettings(wxCommandEvent& event);
 		void OnExit(wxCommandEvent& event);
 		void OnAbout(wxCommandEvent& event);
+};
+
+//App
+class GUI : public wxApp
+{
+    public:
+		virtual bool OnInit();
+		void OnIdle(wxIdleEvent& event);
+	protected:
+		DECLARE_EVENT_TABLE()
+	private:
+		Game* game;
+		Frame* frame;
+		int ai_move, raise;
+		MTRand rng;
+		time_t t;
 };

@@ -74,7 +74,8 @@ void big_blind( Game* g ); // Forced bet at min_bet.
 void deal_hole_cards( Game* g ); // Deal 2 hole cards to each player.
 void deal_community_cards( Game* g, int round ); // Deal FLOP, TURN, and RIVER Cards.
 
-void ai_decision( Game* g ); // Extremely basic RNG-based AI.
+void console_ai( Game* g );
+int ai_move_decision( Game* g ); // Extremely basic RNG-based AI.
 
 void winnings_distribute( Game* g ); // Distribute the winnings to the winner of each pot.
 unsigned short* pot_winner( Game* g, Pot p ); // Get winner of an individual pot.

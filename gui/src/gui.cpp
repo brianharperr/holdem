@@ -2,18 +2,60 @@
 
 wxIMPLEMENT_APP(GUI);
 
+
+BEGIN_EVENT_TABLE(GUI, wxApp)
+	EVT_IDLE(GUI::OnIdle)
+END_EVENT_TABLE()
 ////////////////////////////////////-----APP INITIALIZATION-----/////////////////////////////
 bool GUI::OnInit()
 {
 
-    Game *game = game_create(0, 0, 0);
+    game = game_create(0, 0, 0);
     
-    Frame *frame = new Frame(game);
+    frame = new Frame(game);
     frame->Show(true);
 
     return true;
 }
 
+void GUI::OnIdle(wxIdleEvent& event)
+{
+	if(game->gi.turn_idx != frame->client_player_idx && !frame->isAtEnd){
+		wxSleep(1);
+		ai_move = ai_move_decision( game );
+		switch(ai_move)
+		{
+			case CALL:
+				if(frame->IsLastMove())
+				{
+					call( game );
+					frame->RoundHandler();
+				}else
+				{
+					call( game );
+					frame->Update();
+				}
+				break;
+			case FOLD:
+				if(frame->IsLastMove())
+				{
+					fold( game );
+					frame->RoundHandler();
+				}else
+				{
+					fold( game );
+					frame->Update();
+				}
+				break;
+			case RAISE:
+				rng = seedRand( (unsigned)time( &t ) );
+				raise = ( int )( genRand( &rng ) * (game->table[game->gi.turn_idx].stack - game->gd.curr_min_bet) ) + game->gd.curr_min_bet;
+				raise_bet( game, raise );
+				frame->Update();
+				break;
+		}
+	}
+}
 //////////////////////////////////////-----APP LAYOUT-----///////////////////////////////////
 Frame::Frame( Game* game) : wxFrame( NULL, wxID_ANY, wxT("NL Texas Hold 'Em"), wxDefaultPosition, wxSize(425, 425), wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL )
 {
@@ -40,17 +82,19 @@ Frame::Frame( Game* game) : wxFrame( NULL, wxID_ANY, wxT("NL Texas Hold 'Em"), w
 
 	InitContainers();
 
-	
 	InitText();
 	InitCards();
-	
 	InitOptions();
+
+
 	RoundHandler();
 	Update();
+
 	SetSizer( frameContainer );
 	Layout();
 	SetMinSize(wxSize(425, 425));
 	Centre( wxBOTH );
+
 }
 
 void Frame::InitContainers()
@@ -155,7 +199,11 @@ void Frame::InitText()
 	total_potText->Wrap( -1 );
 	potContainer->Add( total_potText, 1, wxALL | wxALIGN_CENTER_VERTICAL, 5 );
 
-	SetStatusText( wxString::Format( wxT( "WAITING ON PLAYER %d..." ), g->gi.turn_idx), 0);
+	if(g->gi.turn_idx == client_player_idx){
+		SetStatusText( wxString::Format( wxT( "WAITING ON YOU..." ), g->gi.turn_idx), 0);
+	}else{
+		SetStatusText( wxString::Format( wxT( "WAITING ON PLAYER %d..." ), g->gi.turn_idx), 0);
+	}
 	Layout();
 }
 
@@ -184,6 +232,17 @@ void Frame::Update()
 			players_nameText[i]->Hide();
 			players_stackText[i]->Hide();
 		}
+
+		if(g->gi.turn_idx != 0)
+		{
+			foldButton->Enable(false);
+			callButton->Enable(false);
+			raiseButton->Enable(false);
+		}else{
+			foldButton->Enable(true);
+			callButton->Enable(true);
+			raiseButton->Enable(true);
+		}
 	}
 	total_potText->SetLabel(wxString::Format( wxT( "POT: %d     MIN BET: %d" ), g->gd.total_pot, g->gd.curr_min_bet));
 	SetStatusText( wxString::Format( wxT( "WAITING ON PLAYER %d..." ), g->gi.turn_idx), 0);
@@ -202,6 +261,7 @@ void Frame::RoundHandler()
 	switch( g->gd.round )
 	{
 		case PREFLOP:
+			isAtEnd = false;
 			round_handler( g );
 			card_bmps[0]->SetBitmap(wxBitmap(GetCardFilepath(g->table[client_player_idx].hand[0])));
 			card_bmps[1]->SetBitmap(wxBitmap(GetCardFilepath(g->table[client_player_idx].hand[1])));
@@ -232,7 +292,7 @@ void Frame::RoundHandler()
 			Update();
 			break;
 		case END:
-
+			isAtEnd = true;
 			unsigned short* winner = pot_winner( g, g->pot_list->list[0] );
 			winnings_distribute( g );
 			card_bmps[0]->SetBitmap(wxBitmap(GetCardFilepath(g->table[winner[0]].hand[0])));
@@ -269,7 +329,6 @@ void Frame::OnCall(wxCommandEvent& event)
 		RoundHandler();
 	}else
 	{
-		printf("Not last move.\n");
 		call( g );
 		Update();
 	}
