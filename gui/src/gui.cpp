@@ -81,18 +81,18 @@ void Frame::InitContainers()
 void Frame::InitCards()
 {
 
-	card_bmps[0] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT( "../lib/card-bmps/back.bmp" ), wxBITMAP_TYPE_ANY ), wxDefaultPosition, wxDefaultSize, 0 );
-	card_bmps[1] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT( "../lib/card-bmps/back.bmp" ), wxBITMAP_TYPE_ANY ), wxDefaultPosition, wxDefaultSize, 0 );
+	card_bmps[0] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT( "../lib/card-bmps/back.bmp" ), wxBITMAP_TYPE_BMP ), wxDefaultPosition, wxDefaultSize, 0 );
+	card_bmps[1] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT( "../lib/card-bmps/back.bmp" ), wxBITMAP_TYPE_BMP ), wxDefaultPosition, wxDefaultSize, 0 );
 
-	card_bmps[2] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_ANY ), wxDefaultPosition, wxDefaultSize, 0 );
+	card_bmps[2] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_BMP ), wxDefaultPosition, wxDefaultSize, 0 );
 	community_cardsContainer->Add( card_bmps[2], 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-	card_bmps[3] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_ANY ), wxDefaultPosition, wxDefaultSize, 0 );
+	card_bmps[3] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_BMP ), wxDefaultPosition, wxDefaultSize, 0 );
 	community_cardsContainer->Add( card_bmps[3], 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-	card_bmps[4] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_ANY ), wxDefaultPosition, wxDefaultSize, 0 );
+	card_bmps[4] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_BMP ), wxDefaultPosition, wxDefaultSize, 0 );
 	community_cardsContainer->Add( card_bmps[4], 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-	card_bmps[5] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_ANY ), wxDefaultPosition, wxDefaultSize, 0 );
+	card_bmps[5] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_BMP ), wxDefaultPosition, wxDefaultSize, 0 );
 	community_cardsContainer->Add( card_bmps[5], 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-	card_bmps[6] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_ANY ), wxDefaultPosition, wxDefaultSize, 0 );
+	card_bmps[6] = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../lib/card-bmps/back.bmp"), wxBITMAP_TYPE_BMP ), wxDefaultPosition, wxDefaultSize, 0 );
 	community_cardsContainer->Add( card_bmps[6], 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 
 	card_bmps[0]->SetBitmap(wxBitmap(GetCardFilepath(g->table[client_player_idx].hand[0])));
