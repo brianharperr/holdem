@@ -544,11 +544,6 @@ void console_ai( Game* g )
 				call( g );
 			}
 			break;
-		case RAISE:
-			raise = ( int )( genRand( &rng ) * (g->table[g->gi.turn_idx].stack - g->gd.curr_min_bet) ) + g->gd.curr_min_bet;
-			printf("Player %d raised %d chips.\n", g->gi.turn_idx, raise);
-			raise_bet( g, raise );
-			break;
 		case FOLD:
 			printf("Player %d folded.\n", g->gi.turn_idx);
 			if(g->gi.turn_idx == g->gi.end_player_idx){
@@ -569,10 +564,8 @@ int ai_move_decision( Game* g )
     move = ( int )( genRand( &rng ) * 100 );
     if(move < 80){
     	return CALL;
-	}else if(move >= 80 && move < 90){
-		return FOLD;
 	}else{
-		return RAISE;
+		return FOLD;
 	}
 }
 

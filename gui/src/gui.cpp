@@ -47,12 +47,6 @@ void GUI::OnIdle(wxIdleEvent& event)
 					frame->Update();
 				}
 				break;
-			case RAISE:
-				rng = seedRand( (unsigned)time( &t ) );
-				raise = ( int )( genRand( &rng ) * (game->table[game->gi.turn_idx].stack - game->gd.curr_min_bet) ) + game->gd.curr_min_bet;
-				raise_bet( game, raise );
-				frame->Update();
-				break;
 		}
 	}
 }
